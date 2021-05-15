@@ -1,0 +1,27 @@
+{
+    "name": "sebaperez/phpdatasaver",
+    "type": "library",
+    "description": "Allows to easily save data in a mysql database",
+    "homepage": "https://sebaperez.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sebastian Perez",
+            "email": "sperez@frba.utn.edu.ar",
+            "homepage": "https://sebaperez.com",
+            "role": "Developer"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^8"
+    },
+    "scripts": {
+        "test": "phpunit --configuration test/phpunit.xml"
+    },
+    "autoload": {
+        "psr-4": {
+            "DataSaver\\": "src/",
+            "DataSaver\\Test\\": "test/"
+        }
+    }
+}
