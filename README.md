@@ -5,6 +5,9 @@ PHP DataSaver
 
 You can easily define a MySQL table structure and fill up with data. This is great for simple scripts that need to save data quickly
 
+# Build status
+
+![Build Status](https://api.travis-ci.com/sebaperez/phpdatasaver.svg?branch=master&status=created)
 
 # Usage
 
