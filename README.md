@@ -6,7 +6,7 @@ PHP DataSaver
 You can easily define a MySQL table structure and fill up with data. This is great for simple scripts that need to save data quickly
 
 
-# Usage
+# Usage
 
 Simply import the **DataSaver\Table** module
 
