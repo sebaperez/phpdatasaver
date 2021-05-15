@@ -1,0 +1,19 @@
+language: php
+
+php:
+  - 8.0.3
+
+sudo: required
+
+services:
+  - mysql
+
+install:
+  - travis_retry composer install --no-interaction --no-suggest
+  - composer show --installed
+
+before_script:
+  - travis_retry composer self-update
+
+script:
+  - composer test
