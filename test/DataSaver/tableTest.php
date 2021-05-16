@@ -31,6 +31,39 @@ class tableTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals($testName, $result[0][$name]);
 	}
 
+	public function test_column_types() {
+		$TYPES_EXPECTED = [
+			"s" => [ "char", "varchar(50)", "text", "tinytext", "mediumtext", "longtext", "datetime", "date", "timestamp" ],
+			"b" => [ "blob", "tinyblob", "mediumblob", "longblob" ],
+			"i" => [ "tinyint", "smallint", "int", "mediumint", "bigint" ],
+			"d" => [ "float", "double" ]
+		];
+
+		$COLUMNS = [];
+		foreach ($TYPES_EXPECTED as $symbol => $types) {
+			for ($i = 0; $i < count($types); $i++) {
+				$type = $types[$i];
+				$name = $symbol . "_" . $i;
+				array_push($COLUMNS, [ "name" => $name, "type" => $type ]);
+			}
+		}
+
+		$table = \DataSaver\Table::model([
+			"db" => "test",
+			"name" => "test",
+			"columns" => $COLUMNS
+		]);
+
+		$this->assertNotFalse($table);
+
+		foreach ($TYPES_EXPECTED as $symbol => $types) {
+			for ($i = 0; $i < count($types); $i++) {
+				$name = $symbol . "_" . $i;
+				$this->assertEquals($symbol, $table->getTypeSymbolForColumn($name), "Expected $symbol for " . $types[$i] . " but failed");
+			}
+		}
+	}
+
 }
 
 ?>

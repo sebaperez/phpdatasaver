@@ -17,6 +17,9 @@
 
 		public function create() {
 			$query = $this->conn->query("create database if not exists " . $this->getDBName());
+			if (! $query) {
+				throw new \Exception("Error on query execution: " . $this->conn->error);
+			}
 			$this->conn->close();
 			return (bool)$query;
 		}

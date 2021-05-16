@@ -20,11 +20,15 @@
 			$host = self::DEFAULT_HOST();
 			$user = self::DEFAULT_USER();
 			$pass = self::DEFAULT_PASS();
-			$conn = new \mysqli($host, $user, $pass);
-			if ($dbname) {
-				$conn->select_db($dbname);
+			$conn = @new \mysqli($host, $user, $pass);
+			if ($conn->connect_error) {
+				throw new \Exception("Error while establishing connection: " . $conn->connect_error);
+			} else {
+				if ($dbname) {
+					$conn->select_db($dbname);
+				}
+				return $conn;
 			}
-			return $conn;
 		}
 
 	}

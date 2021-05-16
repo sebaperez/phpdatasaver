@@ -49,8 +49,10 @@
 			$type = strtolower($column["type"]);
 
 			$DEFS = [
-				"s" => [ "varchar", "text", "date", "time" ],
-				"i" => [ "int" ]
+				"s" => [ "char", "text", "date", "time" ],
+				"i" => [ "int" ],
+				"b" => [ "blob" ],
+				"d" => [ "float", "double" ]
 			];
 
 			foreach ($DEFS as $symbol => $types) {
@@ -79,9 +81,12 @@
 			$columns = $this->getColumns();
 			$queryArray = [];
 			foreach ($columns as $column) {
-				array_push($queryArray, $column["name"] . " " . $column["type"] . " " .( isset($column["options"]) ? $column["options"] : ""));
+				array_push($queryArray, $column["name"] . " " . $column["type"] . (isset($column["options"]) ? " " . $column["options"] : ""));
 			}
 			$query = $conn->query("create table if not exists " . $this->getName() . " (" . implode(",", $queryArray) . ")");
+			if (! $query) {
+				throw new \Exception("Error on table creation: " . $conn->error);
+			}
 			return (bool)$query;
 		}
 
@@ -101,7 +106,11 @@
 				$st->bind_param(implode("", $querySymbols), ...$parsedValues);
 				if ($st->execute()) {
 					return $conn->insert_id;
+				} else {
+					throw new \Exception("Error on query execution: " . $conn->error);
 				}
+			} else {
+				throw new \Exception("Error on query execution: " . $conn->error);
 			}
 		}
 
@@ -113,12 +122,15 @@
 				$query .= " where " . $pseudoValues[1];
 			}
 
-			$exec = $conn->query($query);
+			if ($exec = $conn->query($query)) {
 			$result = [];
-			while ($rows = $exec->fetch_array()) {
-				array_push($result, $rows);
+				while ($rows = $exec->fetch_array()) {
+					array_push($result, $rows);
+				}
+				return $result;
+			} else {
+				throw new \Exception("Error on query execution: " . $conn->error);
 			}
-			return $result;
 		}
 
 		public function getConn() {
