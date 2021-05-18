@@ -15,14 +15,13 @@
 			$dbname = $data["db"];
 			$name = $data["name"];
 			$columns = $data["columns"];
-			$keys = isset($data["keys"]) ? $data["keys"] : null;
 
 			$db = new DB($dbname);
 			if (! $db->create()) {
 				return false;
 			}
 
-			$table = new Table($dbname, $name, $columns, $keys);
+			$table = new Table($dbname, $name, $columns);
 			if (! $table->create()) {
 				return false;
 			}
@@ -30,11 +29,20 @@
 			return $table;
 		}
 
-		public function __construct($dbname, $name, $columns, $keys = null) {
+		public function __construct($dbname, $name, $columns) {
 			$this->dbname = $dbname;
 			$this->name = $name;
+			$this->keys = [];
+			for ($i = 0; $i < count($columns); $i++) {
+				$options = isset($columns[$i]["options"]) ? $columns[$i]["options"] : null;
+				if ($options) {
+					if (strpos(strtolower($options), "primary key") !== false) {
+						array_push($this->keys, $columns[$i]["name"]);
+						$columns[$i]["options"] = str_replace("primary key", "", strtolower($options));
+					}
+				}
+			}
 			$this->columns = $columns;
-			$this->keys = $keys;
 			$this->conn = null;
 		}
 

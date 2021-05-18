@@ -37,11 +37,10 @@ class tableTest extends \PHPUnit\Framework\TestCase {
 			"db" => "test",
 			"name" => "test_update",
 			"columns" => [
-				[ "name" => "date", "type" => "datetime" ],
-				[ "name" => "item", "type" => "int" ],
+				[ "name" => "date", "type" => "datetime", "options" => "primary key" ],
+				[ "name" => "item", "type" => "int", "options" => "primary key" ],
 				[ "name" => "value", "type" => "int" ]
-			],
-			"keys" => [ "date", "item" ]
+			]
 		]);
 
 		$this->assertNotFalse($table);
