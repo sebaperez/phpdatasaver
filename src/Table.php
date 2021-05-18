@@ -15,13 +15,14 @@
 			$dbname = $data["db"];
 			$name = $data["name"];
 			$columns = $data["columns"];
+			$keys = isset($data["keys"]) ? $data["keys"] : null;
 
 			$db = new DB($dbname);
 			if (! $db->create()) {
 				return false;
 			}
 
-			$table = new Table($dbname, $name, $columns);
+			$table = new Table($dbname, $name, $columns, $keys);
 			if (! $table->create()) {
 				return false;
 			}
@@ -29,10 +30,11 @@
 			return $table;
 		}
 
-		public function __construct($dbname, $name, $columns) {
+		public function __construct($dbname, $name, $columns, $keys = null) {
 			$this->dbname = $dbname;
 			$this->name = $name;
 			$this->columns = $columns;
+			$this->keys = $keys;
 			$this->conn = null;
 		}
 
@@ -76,12 +78,19 @@
 			return $this->columns;
 		}
 
+		public function getKeys() {
+			return $this->keys;
+		}
+
 		public function create() {
 			$conn = $this->getConn();
 			$columns = $this->getColumns();
 			$queryArray = [];
 			foreach ($columns as $column) {
 				array_push($queryArray, $column["name"] . " " . $column["type"] . (isset($column["options"]) ? " " . $column["options"] : ""));
+			}
+			if ($this->getKeys()) {
+				array_push($queryArray, "primary key (" . implode(",", $this->getKeys()) . ")");
 			}
 			$query = $conn->query("create table if not exists " . $this->getName() . " (" . implode(",", $queryArray) . ")");
 			if (! $query) {
@@ -90,14 +99,36 @@
 			return (bool)$query;
 		}
 
-		public function insert($data = []) {
+		public function insert($data = [], $where = null) {
+
+			if ($where) {
+				$data = array_merge($data, $where);
+			}
+
 			$queryString = "insert into " . $this->getName() . " (" . implode(",", array_keys($data)) . ") values (" . implode(",", array_fill(0, count(array_keys($data)), "?")) . ")";
+
+			if ($where) {
+				$queryString .= " on duplicate key update ";
+				$_where = [];
+				foreach ($data as $key => $value) {
+					array_push($_where, "$key = ?");
+				}
+				$queryString .= implode(",", $_where);
+			}
+
 			$querySymbols = [];
 			$parsedValues = [];
 
 			foreach ($data as $columnName => $value) {
 				array_push($querySymbols, $this->getTypeSymbolForColumn($columnName));
 				array_push($parsedValues, $value);
+			}
+
+			if ($where) {
+				foreach ($data as $columnName => $value) {
+					array_push($querySymbols, $this->getTypeSymbolForColumn($columnName));
+					array_push($parsedValues, $value);
+				}
 			}
 
 			$conn = $this->getConn();
@@ -112,6 +143,10 @@
 			} else {
 				throw new \Exception("Error on query execution: " . $conn->error);
 			}
+		}
+
+		public function insertOrUpdate($data = [], $where = []) {
+			return $this->insert($data, $where);
 		}
 
 		public function select($pseudoQuery) {

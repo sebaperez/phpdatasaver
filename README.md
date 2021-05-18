@@ -36,6 +36,12 @@ It will create a both a new database and table if not exists
 $table->insert([ "key" => "value" ]);
 ```
 
+## Insert or update data into the table ##
+
+```
+$table->insertOrUpdate([ "value" => 1 ], [ "key" => 1 ]);
+```
+
 ## Retrieve data from table ##
 
 ```

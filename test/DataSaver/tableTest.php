@@ -31,6 +31,36 @@ class tableTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals($testName, $result[0][$name]);
 	}
 
+	public function test_update() {
+
+		$table = \DataSaver\Table::model([
+			"db" => "test",
+			"name" => "test_update",
+			"columns" => [
+				[ "name" => "date", "type" => "datetime" ],
+				[ "name" => "item", "type" => "int" ],
+				[ "name" => "value", "type" => "int" ]
+			],
+			"keys" => [ "date", "item" ]
+		]);
+
+		$this->assertNotFalse($table);
+
+		$date = date("Y-m-d");
+		$value0 = rand(10, 100);
+		$value1 = rand(10, 100);
+		$value2 = rand(10, 100);
+
+		$table->insertOrUpdate([ "value" => $value0 ], [ "date" => $date, "item" => 1 ]);
+		$table->insertOrUpdate([ "value" => $value1 ], [ "date" => $date, "item" => 1 ]);
+		$table->insertOrUpdate([ "value" => $value2 ], [ "date" => $date, "item" => 2 ]);
+
+		$result1 = $table->select("value where date = '$date' and item = 1");
+		$result2 = $table->select("value where date = '$date' and item = 2");
+		$this->assertEquals($value1, $result1[0]["value"]);
+		$this->assertEquals($value2, $result2[0]["value"]);
+	}
+
 	public function test_column_types() {
 		$TYPES_EXPECTED = [
 			"s" => [ "char", "varchar(50)", "text", "tinytext", "mediumtext", "longtext", "datetime", "date", "timestamp" ],
