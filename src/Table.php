@@ -129,6 +129,9 @@
 
 			foreach ($data as $columnName => $value) {
 				array_push($querySymbols, $this->getTypeSymbolForColumn($columnName));
+				if ($value == 'now()') {
+					$value = date("Y-m-d H:i:s");
+				}
 				array_push($parsedValues, $value);
 			}
 
@@ -176,7 +179,7 @@
 
 			if ($exec = $conn->query($query)) {
 			$result = [];
-				while ($rows = $exec->fetch_array()) {
+				while ($rows = $exec->fetch_assoc()) {
 					array_push($result, $rows);
 				}
 				return $result;

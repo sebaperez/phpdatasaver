@@ -27,12 +27,12 @@ class tableTest extends \PHPUnit\Framework\TestCase {
 		$test_id = $table->insert([ "$name" => $testName ]);
 		$result = $table->select("$key, $name where $key = $test_id");
 		$this->assertCount(1, $result);
+		$this->assertCount(2, array_keys($result[0]));
 		$this->assertEquals($test_id, $result[0][$key]);
 		$this->assertEquals($testName, $result[0][$name]);
 	}
 
 	public function test_update() {
-
 		$table = \DataSaver\Table::model([
 			"db" => "test",
 			"name" => "test_update",
@@ -58,6 +58,29 @@ class tableTest extends \PHPUnit\Framework\TestCase {
 		$result2 = $table->select("value where date = '$date' and item = 2");
 		$this->assertEquals($value1, $result1[0]["value"]);
 		$this->assertEquals($value2, $result2[0]["value"]);
+	}
+
+	public function test_insert_with_now() {
+		$table = \DataSaver\Table::model([
+			"db" => "test",
+			"name" => "test_update_now",
+			"columns" => [
+				[ "name" => "id", "type" => "int", "options" => "auto_increment primary key" ],
+				[ "name" => "datetime", "type" => "datetime" ],
+				[ "name" => "date", "type" => "date" ],
+				[ "name" => "time", "type" => "time" ]
+			]
+		]);
+		$date = date("Y-m-d");
+		$time = date("H:i:s");
+		$datetime = "$date $time";
+		$id = $table->insert([ "date" => 'now()', "time" => 'now()', "datetime" => 'now()' ]);
+		$result = $table->select("datetime, date, time where id = $id");
+		$this->assertCount(1, $result);
+		$this->assertCount(3, array_keys($result[0]));
+		$this->assertEquals($datetime, $result[0]["datetime"]);
+		$this->assertEquals($date, $result[0]["date"]);
+		$this->assertEquals($time, $result[0]["time"]);
 	}
 
 	public function test_column_types() {
