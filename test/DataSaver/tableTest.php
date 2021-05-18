@@ -60,6 +60,23 @@ class tableTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals($value2, $result2[0]["value"]);
 	}
 
+	public function test_insertOrUpdate_fails_if_all_primary_keys_are_not_present() {
+		$table = \DataSaver\Table::model([
+			"db" => "test",
+			"name" => "test_update",
+			"columns" => [
+				[ "name" => "date", "type" => "datetime", "options" => "primary key" ],
+				[ "name" => "item", "type" => "int", "options" => "primary key" ],
+				[ "name" => "value", "type" => "int" ]
+			]
+		]);
+		$this->assertNotFalse($table);
+
+		$this->expectExceptionMessage("Update with primary key not declared: date");
+		$result = $table->insertOrUpdate([ "value" => 1, "item" => 1 ]);
+		$this->assertFalse($result);
+	}
+
 	public function test_insert_with_now() {
 		$table = \DataSaver\Table::model([
 			"db" => "test",
