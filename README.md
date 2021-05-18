@@ -33,14 +33,17 @@ It will create a both a new database and table if not exists
 ## Insert data into the table ##
 
 ```
-$table->insert([ "key" => "value" ]);
+$table->insert([ "key" => "value", "value" => 2 ]);
 ```
 
 ## Insert or update data into the table ##
 
 ```
-$table->insertOrUpdate([ "value" => 1 ], [ "key" => 1 ]);
+$table->insertOrUpdate([ "value" => 1, "key" => 1 ]);
 ```
+
+It is mandatory to declare all primary keys in the statement in order to properly execute an update
+
 
 ## Retrieve data from table ##
 

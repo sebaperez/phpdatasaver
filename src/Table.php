@@ -153,7 +153,16 @@
 			}
 		}
 
-		public function insertOrUpdate($data = [], $where = []) {
+		public function insertOrUpdate($data = []) {
+			$keys = $this->getKeys();
+			$where = [];
+			foreach ($keys as $key) {
+				if (! in_array($key, array_keys($data))) {
+					throw new \Exception("Update with primary key not declared: $key");
+				}
+				$where[$key] = $data[$key];
+				unset($data[$key]);
+			}
 			return $this->insert($data, $where);
 		}
 

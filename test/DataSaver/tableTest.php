@@ -50,9 +50,9 @@ class tableTest extends \PHPUnit\Framework\TestCase {
 		$value1 = rand(10, 100);
 		$value2 = rand(10, 100);
 
-		$table->insertOrUpdate([ "value" => $value0 ], [ "date" => $date, "item" => 1 ]);
-		$table->insertOrUpdate([ "value" => $value1 ], [ "date" => $date, "item" => 1 ]);
-		$table->insertOrUpdate([ "value" => $value2 ], [ "date" => $date, "item" => 2 ]);
+		$table->insertOrUpdate([ "value" => $value0, "date" => $date, "item" => 1 ]);
+		$table->insertOrUpdate([ "value" => $value1, "date" => $date, "item" => 1 ]);
+		$table->insertOrUpdate([ "value" => $value2, "date" => $date, "item" => 2 ]);
 
 		$result1 = $table->select("value where date = '$date' and item = 1");
 		$result2 = $table->select("value where date = '$date' and item = 2");
