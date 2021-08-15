@@ -100,6 +100,33 @@ class tableTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals($time, $result[0]["time"]);
 	}
 
+	public function test_insertOrUpdate_with_now() {
+		$table = \DataSaver\Table::model([
+			"db" => "test",
+			"name" => "test_insertOrUpdate_now",
+			"columns" => [
+				[ "name" => "date", "type" => "date", "options" => "primary key" ],
+				[ "name" => "value", "type" => "int" ]
+			]
+		]);
+
+		$VALUE1 = 1;
+		$VALUE2 = 2;
+
+		$date = date("Y-m-d");
+		$table->insertOrUpdate([ "date" => 'now()', "value" => $VALUE1 ]);
+		$result = $table->select("date, value where date = '$date'");
+		$this->assertCount(1, $result);
+		$this->assertEquals($date, $result[0]["date"]);
+		$this->assertEquals($VALUE1, $result[0]["value"]);
+
+		$table->insertOrUpdate([ "date" => 'now()', "value" => $VALUE2 ]);
+		$result = $table->select("date, value where date = '$date'");
+		$this->assertCount(1, $result);
+		$this->assertEquals($date, $result[0]["date"]);
+		$this->assertEquals($VALUE2, $result[0]["value"]);
+	}
+
 	public function test_column_types() {
 		$TYPES_EXPECTED = [
 			"s" => [ "char", "varchar(50)", "text", "tinytext", "mediumtext", "longtext", "datetime", "date", "timestamp" ],

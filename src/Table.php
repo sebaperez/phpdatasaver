@@ -107,6 +107,13 @@
 			return (bool)$query;
 		}
 
+		public function getReplacedFunctions($value) {
+			if ($value == "now()") {
+				$value = date("Y-m-d H:i:s");
+			}
+			return $value;
+		}
+
 		public function insert($data = [], $where = null) {
 
 			if ($where) {
@@ -129,15 +136,14 @@
 
 			foreach ($data as $columnName => $value) {
 				array_push($querySymbols, $this->getTypeSymbolForColumn($columnName));
-				if ($value == 'now()') {
-					$value = date("Y-m-d H:i:s");
-				}
+				$value = $this->getReplacedFunctions($value);
 				array_push($parsedValues, $value);
 			}
 
 			if ($where) {
 				foreach ($data as $columnName => $value) {
 					array_push($querySymbols, $this->getTypeSymbolForColumn($columnName));
+					$value = $this->getReplacedFunctions($value);
 					array_push($parsedValues, $value);
 				}
 			}
