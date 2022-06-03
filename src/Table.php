@@ -162,6 +162,17 @@
 			}
 		}
 
+		public function truncate() {
+			$conn = $this->getConn();
+			$queryString = "truncate " . $this->getName();
+			$st = $conn->prepare($queryString);
+			if ($st && $st->execute()) {
+				return true;
+			} else {
+				throw new \Exception("Error on query execution: " . $conn->error);
+			}
+		}
+
 		public function insertOrUpdate($data = []) {
 			$keys = $this->getKeys();
 			$where = [];

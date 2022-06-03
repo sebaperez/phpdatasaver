@@ -53,3 +53,10 @@ $table->select("key1, key2 where key1 > 1");
 
 It uses a **pseudo query**. As the script already knows the table you are refering to, you can omit the "select" and "from table" from the query.
 You cannot do joins or other kind of operations between tables. It will return an array with all matches as associative arrays.
+
+## Truncate table ##
+
+```
+$table->truncate();
+```
+

@@ -160,6 +160,27 @@ class tableTest extends \PHPUnit\Framework\TestCase {
 		}
 	}
 
+	public function test_truncate() {
+		$table = \DataSaver\Table::model([
+			"db" => "test",
+			"name" => "test_truncate",
+			"columns" => [
+				[ "name" => "id", "type" => "int", "options" => "auto_increment primary key" ],
+				[ "name" => "value", "type" => "varchar(50)" ]
+			]
+		]);
+		$VALUE = "test";
+		$table->insert([
+			"value" => $VALUE
+		]);
+		$result = $table->select("value");
+		$this->assertCount(1, $result);
+		$this->assertEquals($VALUE, $result[0]["value"]);
+		$this->assertTrue($table->truncate());
+		$result = $table->select("value");
+		$this->assertCount(0, $result);
+	}
+
 }
 
 ?>
