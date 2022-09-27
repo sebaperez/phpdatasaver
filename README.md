@@ -21,8 +21,9 @@ $table = \DataSaver\Table::model([
 	"db" => $dbName,
 	"name" => $tableName,
 	"columns" => [
-		[ "name" => $key, "type" => "int", "options" => "auto_increment primary key" ],
-		[ "name" => $name, "type" => "varchar(255)" ]
+		[ "name" => "column1", "type" => "int", "options" => "auto_increment primary key" ],
+		[ "name" => "column2", "type" => "varchar(255)" ],
+		[ "name" => "column3", "type" => "int" ]
 	]
 ]);
 ```
@@ -33,13 +34,13 @@ It will create both a new database and table if not exist
 ## Insert data into the table ##
 
 ```
-$table->insert([ "key" => "value", "value" => 2 ]);
+$table->insert([ "column2" => "value", "column3" => 2 ]);
 ```
 
 ## Insert or update data into the table ##
 
 ```
-$table->insertOrUpdate([ "value" => 1, "key" => 1 ]);
+$table->insertOrUpdate([ "column3" => 1, "column1" => 1 ]);
 ```
 
 It is mandatory to declare all primary keys in the statement in order to properly execute an update
@@ -48,11 +49,11 @@ It is mandatory to declare all primary keys in the statement in order to properl
 ## Retrieve data from table ##
 
 ```
-$table->select("key1, key2 where key1 > 1");
+$table->select("column2, column3 where column1 > 1");
 ```
 
-It uses a **pseudo query**. As the script already knows the table you are refering to, you can omit the "select" and "from table" from the query.
-You cannot do joins or other kind of operations between tables. It will return an array with all matches as associative arrays.
+It uses a **pseudo query**. As this module already knows the table you are refering to, you can omit the "select" and "from table" from the query.
+Join or other kind of operations between tables are not supported. It will return an array with all matches as associative arrays.
 
 ## Truncate table ##
 
